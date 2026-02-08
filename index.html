@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Valentine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            overflow-x: hidden;
+            /* Custom Heart Cursor */
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='40' height='48' viewport='0 0 100 100' style='fill:black;font-size:24px;'><text y='50%'>❤️</text></svg>") 16 0, auto;
+        }
+        
+        .handwriting { font-family: 'Dancing Script', cursive; }
+        
+        html { scroll-behavior: smooth; }
+        
+        .heart-bg {
+            background-color: #fdf2f8;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 3.22l-.61-.6a5.5 5.5 0 0 0-7.78 7.77L10 18.78l8.39-8.4a5.5 5.5 0 0 0-7.78-7.77l-.61.61z' fill='%23f472b6' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .fade-in {
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdf2f8;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f472b6;
+            border-radius: 10px;
+        }
+
+        .no-btn-transition {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Timeline CSS */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background-color: #f472b6;
+            border-radius: 2px;
+        }
+        
+        /* Floating Hearts Animation */
+        .floating-heart {
+            position: fixed;
+            bottom: -10vh;
+            font-size: 2rem;
+            animation: floatUp linear forwards;
+            z-index: -1;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        @keyframes floatUp {
+            to {
+                bottom: 110vh;
+                transform: rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Typewriter Cursor */
+        .cursor-blink {
+            display: inline-block;
+            width: 2px;
+            background-color: #ec4899;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Envelope Styles */
+        .envelope {
+            transition: transform 0.3s ease;
+        }
+        .envelope:hover {
+            transform: translateY(-10px);
+        }
+    </style>
+</head>
+<body class="heart-bg text-gray-800 antialiased overflow-hidden" id="mainBody">
+
+    <!-- LOCK SCREEN -->
+    <div id="lockScreen" class="fixed inset-0 z-[100] bg-pink-100 flex flex-col items-center justify-center text-center p-6 transition-all duration-1000">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl border-4 border-pink-300 max-w-md w-full">
+            <h1 class="text-4xl handwriting text-pink-600 mb-4">Unlock My Heart 🔒</h1>
+            <p class="text-gray-600 mb-6">Enter the day and month we started our journey (DDMM)</p>
+            <input type="password" id="passcode" maxlength="6" class="w-full text-center text-3xl tracking-widest p-3 border-2 border-pink-200 rounded-xl focus:outline-none focus:border-pink-500 mb-6 text-pink-600 placeholder-pink-200" placeholder="••••">
+            <button onclick="checkPasscode()" class="w-full bg-pink-500 text-white font-bold py-3 rounded-xl hover:bg-pink-600 transition shadow-lg">UNLOCK</button>
+            <p id="errorMsg" class="text-red-500 mt-4 hidden">Wrong code! Hint: It's in March 😉</p>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="mitwa.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Music Toggle Button -->
+    <button id="musicBtn" class="fixed top-4 right-4 z-50 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-lg text-pink-600 hover:scale-110 transition-transform animate-pulse hidden">
+        🎵
+    </button>
+
+    <!-- Floating Hearts Container -->
+    <div id="heartsContainer"></div>
+
+    <!-- Hero Section -->
+    <div class="min-h-screen flex flex-col justify-center items-center text-center p-6 relative">
+        <div class="fade-in">
+            <h1 class="text-6xl md:text-8xl font-bold text-pink-600 mb-4 animate-bounce">
+                Happy Valentine's Day!
+            </h1>
+            <p class="text-xl md:text-3xl text-gray-600 mb-10 handwriting">
+                To the person who makes my world brighter.
+            </p>
+            
+            <div class="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-2 border-pink-100 inline-block">
+                <p class="text-pink-400 uppercase tracking-widest text-xs font-bold mb-3">We've been together for</p>
+                <div id="counter" class="text-2xl md:text-4xl font-mono font-bold text-pink-600">
+                    00 Days : 00 Hrs : 00 Min : 00 Sec
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 animate-bounce text-pink-400">
+            <p class="text-sm font-semibold">Scroll for our story</p>
+            <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+    </div>
+
+    <!-- Memory Gallery -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="text-center mb-16">
+            <h2 class="text-5xl handwriting text-pink-600 mb-4">Our Favorite Memories</h2>
+            <div class="h-1 w-24 bg-pink-300 mx-auto rounded-full"></div>
+            <p class="text-gray-500 mt-4">Click any photo to see it full size</p>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <!-- Memory Images -->
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo1.jpg" alt="Memory 1" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo2.jpg" alt="Memory 2" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo3.jpg" alt="Memory 3" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo4.webp" alt="Memory 4" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo5.jpg" alt="Memory 5" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo6.jpg" alt="Memory 6" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo7.JPG" alt="Memory 7" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo8.JPG" alt="Memory 8" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo9.jpg" alt="Memory 9" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo10.JPG" alt="Memory 10" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo11.JPG" alt="Memory 11" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo12.JPG" alt="Memory 12" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo13.JPG" alt="Memory 13" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo14.JPG" alt="Memory 14" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo15.JPG" alt="Memory 15" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+            <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                <img src="images/photo16.jpeg" alt="Memory 16" class="w-full h-full object-cover memory-img transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span class="text-white bg-pink-600/80 px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm">Enlarge</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Relationship Timeline -->
+    <section class="max-w-4xl mx-auto px-6 py-20 mb-24">
+        <h2 class="text-4xl handwriting text-center text-pink-600 mb-12">Our Journey</h2>
+        
+        <div class="relative">
+            <div class="timeline-line"></div>
+            
+            <div class="space-y-12">
+                <!-- Event 1 (Left) -->
+                <div class="flex flex-col md:flex-row items-center justify-between relative w-full">
+                    <div class="w-full md:w-5/12 bg-white p-6 rounded-xl shadow-lg border border-pink-100 text-right">
+                        <h3 class="font-bold text-pink-500 text-xl">07/03/2025</h3>
+                        <p class="text-gray-600 text-sm">The day we started our journey together</p>
+                    </div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-pink-500 rounded-full border-4 border-white shadow"></div>
+                    <div class="w-full md:w-5/12"></div>
+                </div>
+
+                <!-- Event 2 (Right) -->
+                <div class="flex flex-col md:flex-row items-center justify-between relative w-full">
+                    <div class="w-full md:w-5/12"></div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-pink-500 rounded-full border-4 border-white shadow"></div>
+                    <div class="w-full md:w-5/12 bg-white p-6 rounded-xl shadow-lg border border-pink-100 text-left">
+                        <h3 class="font-bold text-pink-500 text-xl">28/05/2025</h3>
+                        <p class="text-gray-600 text-sm">Our first trip togethers</p>
+                    </div>
+                </div>
+
+                <!-- Event 3 (Left) -->
+                <div class="flex flex-col md:flex-row items-center justify-between relative w-full">
+                    <div class="w-full md:w-5/12 bg-white p-6 rounded-xl shadow-lg border border-pink-100 text-right">
+                        <h3 class="font-bold text-pink-500 text-xl">20/09/2025</h3>
+                        <p class="text-gray-600 text-sm">Our first Kiss</p>
+                    </div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-pink-500 rounded-full border-4 border-white shadow"></div>
+                    <div class="w-full md:w-5/12"></div>
+                </div>
+
+                <!-- Event 4 (Right) -->
+                <div class="flex flex-col md:flex-row items-center justify-between relative w-full">
+                    <div class="w-full md:w-5/12"></div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-pink-500 rounded-full border-4 border-white shadow"></div>
+                    <div class="w-full md:w-5/12 bg-white p-6 rounded-xl shadow-lg border border-pink-100 text-left">
+                        <h3 class="font-bold text-pink-500 text-xl">17/01/2026</h3>
+                        <p class="text-gray-600 text-sm">An unforgettable trip with you to Kanyakumari</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: "Open When" Envelopes -->
+    <section class="max-w-4xl mx-auto px-6 py-20 bg-pink-50/50 rounded-3xl mb-24">
+        <h2 class="text-4xl handwriting text-center text-pink-600 mb-12">Open When...</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            
+            <!-- Envelope 1 -->
+            <div onclick="openEnvelope('miss')" class="envelope cursor-pointer bg-white p-8 rounded-xl shadow-lg border-2 border-pink-200">
+                <div class="text-6xl mb-4"></div>
+                <h3 class="font-bold text-gray-700">You Miss Me</h3>
+            </div>
+
+            <!-- Envelope 2 -->
+            <div onclick="openEnvelope('sad')" class="envelope cursor-pointer bg-white p-8 rounded-xl shadow-lg border-2 border-pink-200">
+                <div class="text-6xl mb-4"></div>
+                <h3 class="font-bold text-gray-700">You're Sad</h3>
+            </div>
+
+            <!-- Envelope 3 -->
+            <div onclick="openEnvelope('happy')" class="envelope cursor-pointer bg-white p-8 rounded-xl shadow-lg border-2 border-pink-200">
+                <div class="text-6xl mb-4"></div>
+                <h3 class="font-bold text-gray-700">You're Happy</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Mini Quiz -->
+  
+
+    <!-- Reasons I Love You Generator -->
+    <section class="max-w-xl mx-auto px-6 py-20 text-center mt-24">
+        <h2 class="text-4xl handwriting text-pink-600 mb-6">Why I Love You</h2>
+        <div class="bg-white p-8 rounded-2xl shadow-xl border-2 border-pink-200 min-h-[150px] flex flex-col items-center justify-center">
+            <p id="reasonText" class="text-xl text-gray-700 font-medium mb-6">Click the button to see why!</p>
+            <button onclick="generateReason()" class="px-6 py-2 bg-pink-500 text-white rounded-full font-bold hover:bg-pink-600 transition shadow-md">
+                Tell Me Another Reason 💖
+            </button>
+        </div>
+    </section>
+
+    <!-- Love Note with Typewriter Effect -->
+    <section id="noteSection" class="max-w-3xl mx-auto px-8 py-20 bg-white/60 backdrop-blur-md rounded-3xl shadow-xl border border-pink-100 mb-20 relative overflow-hidden min-h-[500px]">
+        <div class="absolute -top-10 -right-10 text-pink-100">
+            <svg class="w-40 h-40 fill-current" viewBox="0 0 20 20"><path d="M10 3.22l-.61-.6a5.5 5.5 0 0 0-7.78 7.77L10 18.78l8.39-8.4a5.5 5.5 0 0 0-7.78-7.77l-.61.61z"/></svg>
+        </div>
+        
+        <h2 class="text-4xl handwriting text-pink-600 mb-8 flex items-center gap-3">
+            A Note for You 
+            <span class="inline-block animate-pulse">💌</span>
+        </h2>
+        
+        <!-- Typewriter Container -->
+        <div class="space-y-4 text-gray-700 leading-relaxed text-lg">
+            <p id="typewriterText"></p><span class="cursor-blink">&nbsp;</span>
+        </div>
+        
+        <p class="text-right mt-10 handwriting text-3xl text-pink-500">- Kashi</p>
+    </section>
+
+    <!-- Proposal Section -->
+    <div class="min-h-screen flex flex-col justify-center items-center p-6 text-center bg-pink-50/50">
+        <h2 class="text-5xl md:text-7xl font-bold text-pink-600 mb-12 handwriting">Do you love me??</h2>
+        
+        <div id="proposalContainer" class="flex flex-col md:flex-row gap-8 items-center justify-center min-h-[200px] w-full relative">
+            <button id="yesBtn" onclick="handleYes()" class="px-12 py-5 bg-green-500 text-white font-bold rounded-full text-2xl shadow-xl transform transition hover:scale-110 active:scale-95 hover:bg-green-600 z-10">
+                YES! ❤️
+            </button>
+            
+            <button id="noBtn" class="no-btn-transition px-12 py-5 bg-red-500 text-white font-bold rounded-full text-2xl shadow-xl z-10 cursor-pointer">
+                NO 💔
+            </button>
+        </div>
+
+        <div id="successMessage" class="hidden text-center fade-in">
+            <h3 class="text-4xl font-bold text-pink-600 mb-4">I love youuuuhhh 💖</h3>
+            <p class="text-xl text-gray-600">You've made me the happiest person alive!</p>
+        </div>
+    </div>
+
+    <!-- NEW: Footer -->
+    <footer class="bg-pink-100 py-8 text-center text-pink-400 text-sm">
+        <p>Made with ❤️ by Kashi</p>
+        <p class="mt-2 text-xs">Forever & Always</p>
+    </footer>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 bg-black/95 hidden items-center justify-center z-[150] p-4 backdrop-blur-sm">
+        <button id="closeLightbox" class="absolute top-6 right-6 text-white text-5xl hover:text-pink-400 transition-colors">&times;</button>
+        <div class="relative max-w-5xl w-full flex justify-center">
+            <img id="lightboxImg" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl border-2 border-white/10" src="" alt="Full view">
+        </div>
+    </div>
+
+    <!-- Envelope Message Modal -->
+    <div id="envelopeModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[150] p-4 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full text-center relative border-4 border-pink-200">
+            <button onclick="closeEnvelope()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            <div class="text-5xl mb-4">💌</div>
+            <h3 id="envTitle" class="text-2xl font-bold text-pink-600 mb-4 handwriting"></h3>
+            <p id="envMessage" class="text-gray-700 leading-relaxed"></p>
+        </div>
+    </div>
+
+    <!-- No Option Modal -->
+    <div id="noOptionModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[150] p-4 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-md border-4 border-pink-300 transform scale-100 transition-transform">
+            <h3 class="text-3xl font-bold text-pink-600 mb-6 handwriting">You have no other option!</h3>
+            <p class="text-xl text-gray-700 mb-8">You have to love me!</p>
+            <button onclick="handleYesFromModal()" class="px-8 py-3 bg-green-500 text-white font-bold rounded-full text-xl shadow-lg hover:bg-green-600 transition transform hover:scale-105">
+                YES! ❤️
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 1. LOCK SCREEN LOGIC
+        function checkPasscode() {
+            const input = document.getElementById('passcode').value;
+            const lockScreen = document.getElementById('lockScreen');
+            const mainBody = document.getElementById('mainBody');
+            const errorMsg = document.getElementById('errorMsg');
+            const music = document.getElementById('bgMusic');
+            const musicBtn = document.getElementById('musicBtn');
+
+            if (input === '070325') {
+                lockScreen.style.opacity = '0';
+                setTimeout(() => {
+                    lockScreen.style.display = 'none';
+                    mainBody.style.overflow = 'auto'; // Re-enable scrolling
+                    musicBtn.classList.remove('hidden');
+                    // Play music on unlock
+                    music.play().then(() => {
+                        musicBtn.innerText = "🎵";
+                    }).catch(e => console.log("Audio requires interaction"));
+                }, 1000);
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('passcode').value = '';
+            }
+        }
+
+        // 2. ENVELOPE MESSAGES
+        const messages = {
+            'miss': {
+                title: "When You Miss Me",
+                text: "Remember that I am always with you, in your heart and just a phone call away. Distance means so little when someone means so much. I miss you too! ❤️"
+            },
+            'sad': {
+                title: "When You're Sad",
+                text: "It's okay to have bad days. Just remember that you are strong, beautiful, and loved beyond measure. This storm will pass, and I'll be here holding your umbrella."
+            },
+            'happy': {
+                title: "When You're Happy",
+                text: "Your happiness is my favorite thing in the world! Keep smiling that beautiful smile. I hope I can add even more joy to your day. Love you! 🎉"
+            }
+        };
+
+        function openEnvelope(type) {
+            const modal = document.getElementById('envelopeModal');
+            document.getElementById('envTitle').innerText = messages[type].title;
+            document.getElementById('envMessage').innerText = messages[type].text;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEnvelope() {
+            const modal = document.getElementById('envelopeModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // 3. QUIZ LOGIC
+        function checkQuiz(isCorrect, btn) {
+            const resultText = document.getElementById('quizResult');
+            const allBtns = btn.parentElement.querySelectorAll('button');
+            
+            // Reset styles
+            allBtns.forEach(b => {
+                b.classList.remove('bg-green-500', 'bg-red-500', 'text-white');
+                b.classList.add('bg-gray-100');
+            });
+
+            if (isCorrect) {
+                btn.classList.remove('bg-gray-100');
+                btn.classList.add('bg-green-500', 'text-white');
+                resultText.innerText = "YAY! You remembered! 🎉";
+                resultText.className = "mt-4 font-bold text-lg text-green-600 block";
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            } else {
+                btn.classList.remove('bg-gray-100');
+                btn.classList.add('bg-red-500', 'text-white');
+                resultText.innerText = "Oops! Try again 🙈";
+                resultText.className = "mt-4 font-bold text-lg text-red-500 block";
+            }
+        }
+
+        // --- EXISTING SCRIPTS BELOW ---
+
+        // DATE COUNTER
+        const startDate = new Date("2025-03-07"); 
+        function updateCounter() {
+            const now = new Date();
+            const diff = now - startDate;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            const absDays = Math.abs(days);
+            document.getElementById("counter").innerText = 
+                `${absDays} Days : ${Math.abs(hours)} Hrs : ${Math.abs(minutes)} Min : ${Math.abs(seconds)} Sec`;
+        }
+        setInterval(updateCounter, 1000);
+        updateCounter();
+
+        // MUSIC PLAYER TOGGLE
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (music.paused) {
+                music.play();
+                musicBtn.innerText = "🎵";
+            } else {
+                music.pause();
+                musicBtn.innerText = "🔇";
+            }
+        });
+
+        // NO BUTTON & MODAL
+        const noBtn = document.getElementById("noBtn");
+        const noOptionModal = document.getElementById("noOptionModal");
+        noBtn.addEventListener("click", () => {
+            noOptionModal.classList.remove("hidden");
+            noOptionModal.classList.add("flex");
+        });
+
+        // CELEBRATION ACTION
+        function handleYes() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ec4899', '#f43f5e', '#ffffff']
+            });
+            document.getElementById('proposalContainer').classList.add('hidden');
+            document.getElementById('successMessage').classList.remove('hidden');
+            document.getElementById('noOptionModal').classList.add('hidden');
+            document.getElementById('noOptionModal').classList.remove('flex');
+            
+            const duration = 15 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            const interval = setInterval(function() {
+              const timeLeft = animationEnd - Date.now();
+              if (timeLeft <= 0) return clearInterval(interval);
+              const particleCount = 50 * (timeLeft / duration);
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+        function handleYesFromModal() { handleYes(); }
+
+        // LIGHTBOX
+        const lightbox = document.getElementById("lightbox");
+        const lightboxImg = document.getElementById("lightboxImg");
+        const closeBtn = document.getElementById("closeLightbox");
+        document.querySelectorAll(".memory-img").forEach(img => {
+            img.addEventListener("click", () => {
+                lightboxImg.src = img.src;
+                lightbox.classList.remove("hidden");
+                lightbox.classList.add("flex");
+            });
+        });
+        const closeGallery = () => {
+            lightbox.classList.add("hidden");
+            lightbox.classList.remove("flex");
+        };
+        closeBtn.addEventListener("click", closeGallery);
+        lightbox.addEventListener("click", (e) => {
+            if (e.target === lightbox || e.target === lightboxImg) closeGallery();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") closeGallery();
+        });
+
+        // TYPEWRITER
+        const noteText = `Achuuuu<br><br>
+        This Valentine’s Day, I don’t just want to tell you that I love you—I want to thank you from the deepest part of my heart. You came into my life when I was at my lowest, and yet, you stayed. You understood me when I couldn’t even understand myself.<br><br>
+        In this generation, having a loyal heart like yours feels almost impossible to find. You chose me, stayed with me, and loved me through my weakest moments. That loyalty, that patience, that care... it means everything to me.<br><br>
+        And now, we’re also just days away from our <strong>1-year anniversary on 7th March</strong>. One whole year of us. One year of memories, growth, and standing by each other. I’m so proud of what we’ve built.<br><br>
+        You are my comfort, my happiness, and my peace. Loving you feels right, and being with you feels like home.<br><br>
+        <strong>Happy Valentine’s Day, my love. Here’s to forever.</strong>`;
+
+        const typewriterElement = document.getElementById('typewriterText');
+        let typeStarted = false;
+        function typeWriter(text, element, speed = 30) {
+            let i = 0;
+            element.innerHTML = "";
+            function type() {
+                if (i < text.length) {
+                    if (text.charAt(i) === '<') {
+                        let tag = '';
+                        while (text.charAt(i) !== '>') { tag += text.charAt(i); i++; }
+                        tag += '>'; i++;
+                        element.innerHTML += tag;
+                    } else {
+                        element.innerHTML += text.charAt(i); i++;
+                    }
+                    setTimeout(type, speed);
+                } else {
+                    document.querySelector('.cursor-blink').style.display = 'none';
+                }
+            }
+            type();
+        }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !typeStarted) {
+                    typeStarted = true;
+                    typeWriter(noteText, typewriterElement);
+                }
+            });
+        }, { threshold: 0.3 });
+        observer.observe(document.getElementById('noteSection'));
+
+        // FLOATING HEARTS
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 4 + 's'; 
+            heart.style.fontSize = Math.random() * 1.5 + 0.5 + 'rem'; 
+            document.getElementById('heartsContainer').appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 7000);
+        }
+        setInterval(createHeart, 500);
+
+        // REASONS GENERATOR
+        const reasons = [
+            "Your smile lights up my entire day.",
+            "You listen to me like no one else does.",
+            "The way you look at me makes me melt.",
+            "You support my dreams unconditionally.",
+            "Your laugh is my favorite sound.",
+            "You make even the boring moments fun.",
+            "You are beautiful inside and out.",
+            "You always know how to cheer me up."
+        ];
+        function generateReason() {
+            const reasonText = document.getElementById('reasonText');
+            const randomReason = reasons[Math.floor(Math.random() * reasons.length)];
+            reasonText.style.opacity = 0;
+            setTimeout(() => {
+                reasonText.innerText = randomReason;
+                reasonText.style.opacity = 1;
+            }, 200);
+            reasonText.style.transition = "opacity 0.2s ease-in-out";
+        }
+    </script>
+</body>
+</html>
