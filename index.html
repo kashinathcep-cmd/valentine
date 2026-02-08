@@ -20,9 +20,16 @@
         
         html { scroll-behavior: smooth; }
         
+        /* UPDATED BACKGROUND: Photo + Pink/White Gradient Overlay */
         .heart-bg {
             background-color: #fdf2f8;
-            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 3.22l-.61-.6a5.5 5.5 0 0 0-7.78 7.77L10 18.78l8.39-8.4a5.5 5.5 0 0 0-7.78-7.77l-.61.61z' fill='%23f472b6' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background-image: 
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 192, 203, 0.6) 100%),
+                url('images/photo12.JPG');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Creates a parallax effect */
+            background-repeat: no-repeat;
         }
 
         .fade-in {
@@ -39,7 +46,7 @@
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #fdf2f8;
+            background: rgba(253, 242, 248, 0.5);
         }
         ::-webkit-scrollbar-thumb {
             background: #f472b6;
@@ -136,7 +143,7 @@
                 To the person who makes my world brighter.
             </p>
             
-            <div class="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-2 border-pink-100 inline-block">
+            <div class="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border-2 border-pink-100 inline-block">
                 <p class="text-pink-400 uppercase tracking-widest text-xs font-bold mb-3">We've been together for</p>
                 <div id="counter" class="text-2xl md:text-4xl font-mono font-bold text-pink-600">
                     00 Days : 00 Hrs : 00 Min : 00 Sec
@@ -151,7 +158,7 @@
     </div>
 
     <!-- Memory Gallery -->
-    <section class="max-w-7xl mx-auto px-6 py-20">
+    <section class="max-w-7xl mx-auto px-6 py-20 bg-white/30 backdrop-blur-sm rounded-3xl my-12">
         <div class="text-center mb-16">
             <h2 class="text-5xl handwriting text-pink-600 mb-4">Our Favorite Memories</h2>
             <div class="h-1 w-24 bg-pink-300 mx-auto rounded-full"></div>
@@ -261,7 +268,7 @@
 
     <!-- Relationship Timeline -->
     <section class="max-w-4xl mx-auto px-6 py-20 mb-24">
-        <h2 class="text-4xl handwriting text-center text-pink-600 mb-12">Our Journey</h2>
+        <h2 class="text-4xl handwriting text-center text-pink-600 mb-12 drop-shadow-sm">Our Journey</h2>
         
         <div class="relative">
             <div class="timeline-line"></div>
@@ -269,7 +276,7 @@
             <div class="space-y-12">
                 <!-- Event 1 (Left) -->
                 <div class="flex flex-col md:flex-row items-center justify-between relative w-full">
-                    <div class="w-full md:w-5/12 bg-white p-6 rounded-xl shadow-lg border border-pink-100 text-right">
+                    <div class="w-full md:w-5/12 bg-white/90 p-6 rounded-xl shadow-lg border border-pink-100 text-right backdrop-blur-sm">
                         <h3 class="font-bold text-pink-500 text-xl">07/03/2025</h3>
                         <p class="text-gray-600 text-sm">The day we started our journey together</p>
                     </div>
@@ -281,7 +288,7 @@
                 <div class="flex flex-col md:flex-row items-center justify-between relative w-full">
                     <div class="w-full md:w-5/12"></div>
                     <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-pink-500 rounded-full border-4 border-white shadow"></div>
-                    <div class="w-full md:w-5/12 bg-white p-6 rounded-xl shadow-lg border border-pink-100 text-left">
+                    <div class="w-full md:w-5/12 bg-white/90 p-6 rounded-xl shadow-lg border border-pink-100 text-left backdrop-blur-sm">
                         <h3 class="font-bold text-pink-500 text-xl">28/05/2025</h3>
                         <p class="text-gray-600 text-sm">Our first trip togethers</p>
                     </div>
@@ -289,7 +296,7 @@
 
                 <!-- Event 3 (Left) -->
                 <div class="flex flex-col md:flex-row items-center justify-between relative w-full">
-                    <div class="w-full md:w-5/12 bg-white p-6 rounded-xl shadow-lg border border-pink-100 text-right">
+                    <div class="w-full md:w-5/12 bg-white/90 p-6 rounded-xl shadow-lg border border-pink-100 text-right backdrop-blur-sm">
                         <h3 class="font-bold text-pink-500 text-xl">20/09/2025</h3>
                         <p class="text-gray-600 text-sm">Our first Kiss</p>
                     </div>
@@ -301,7 +308,7 @@
                 <div class="flex flex-col md:flex-row items-center justify-between relative w-full">
                     <div class="w-full md:w-5/12"></div>
                     <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-pink-500 rounded-full border-4 border-white shadow"></div>
-                    <div class="w-full md:w-5/12 bg-white p-6 rounded-xl shadow-lg border border-pink-100 text-left">
+                    <div class="w-full md:w-5/12 bg-white/90 p-6 rounded-xl shadow-lg border border-pink-100 text-left backdrop-blur-sm">
                         <h3 class="font-bold text-pink-500 text-xl">17/01/2026</h3>
                         <p class="text-gray-600 text-sm">An unforgettable trip with you to Kanyakumari</p>
                     </div>
@@ -311,7 +318,7 @@
     </section>
 
     <!-- NEW: "Open When" Envelopes -->
-    <section class="max-w-4xl mx-auto px-6 py-20 bg-pink-50/50 rounded-3xl mb-24">
+    <section class="max-w-4xl mx-auto px-6 py-20 bg-white/40 backdrop-blur-md rounded-3xl mb-24 shadow-lg border border-pink-200">
         <h2 class="text-4xl handwriting text-center text-pink-600 mb-12">Open When...</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             
@@ -336,12 +343,11 @@
     </section>
 
     <!-- NEW: Mini Quiz -->
-  
 
     <!-- Reasons I Love You Generator -->
     <section class="max-w-xl mx-auto px-6 py-20 text-center mt-24">
-        <h2 class="text-4xl handwriting text-pink-600 mb-6">Why I Love You</h2>
-        <div class="bg-white p-8 rounded-2xl shadow-xl border-2 border-pink-200 min-h-[150px] flex flex-col items-center justify-center">
+        <h2 class="text-4xl handwriting text-pink-600 mb-6 drop-shadow-sm">Why I Love You</h2>
+        <div class="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border-2 border-pink-200 min-h-[150px] flex flex-col items-center justify-center">
             <p id="reasonText" class="text-xl text-gray-700 font-medium mb-6">Click the button to see why!</p>
             <button onclick="generateReason()" class="px-6 py-2 bg-pink-500 text-white rounded-full font-bold hover:bg-pink-600 transition shadow-md">
                 Tell Me Another Reason 💖
@@ -350,7 +356,7 @@
     </section>
 
     <!-- Love Note with Typewriter Effect -->
-    <section id="noteSection" class="max-w-3xl mx-auto px-8 py-20 bg-white/60 backdrop-blur-md rounded-3xl shadow-xl border border-pink-100 mb-20 relative overflow-hidden min-h-[500px]">
+    <section id="noteSection" class="max-w-3xl mx-auto px-8 py-20 bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-pink-100 mb-20 relative overflow-hidden min-h-[500px]">
         <div class="absolute -top-10 -right-10 text-pink-100">
             <svg class="w-40 h-40 fill-current" viewBox="0 0 20 20"><path d="M10 3.22l-.61-.6a5.5 5.5 0 0 0-7.78 7.77L10 18.78l8.39-8.4a5.5 5.5 0 0 0-7.78-7.77l-.61.61z"/></svg>
         </div>
@@ -369,27 +375,29 @@
     </section>
 
     <!-- Proposal Section -->
-    <div class="min-h-screen flex flex-col justify-center items-center p-6 text-center bg-pink-50/50">
-        <h2 class="text-5xl md:text-7xl font-bold text-pink-600 mb-12 handwriting">Do you love me??</h2>
-        
-        <div id="proposalContainer" class="flex flex-col md:flex-row gap-8 items-center justify-center min-h-[200px] w-full relative">
-            <button id="yesBtn" onclick="handleYes()" class="px-12 py-5 bg-green-500 text-white font-bold rounded-full text-2xl shadow-xl transform transition hover:scale-110 active:scale-95 hover:bg-green-600 z-10">
-                YES! ❤️
-            </button>
+    <div class="min-h-screen flex flex-col justify-center items-center p-6 text-center">
+        <div class="bg-white/60 backdrop-blur-md p-10 rounded-3xl shadow-2xl">
+            <h2 class="text-5xl md:text-7xl font-bold text-pink-600 mb-12 handwriting">Do you love me??</h2>
             
-            <button id="noBtn" class="no-btn-transition px-12 py-5 bg-red-500 text-white font-bold rounded-full text-2xl shadow-xl z-10 cursor-pointer">
-                NO 💔
-            </button>
-        </div>
+            <div id="proposalContainer" class="flex flex-col md:flex-row gap-8 items-center justify-center min-h-[200px] w-full relative">
+                <button id="yesBtn" onclick="handleYes()" class="px-12 py-5 bg-green-500 text-white font-bold rounded-full text-2xl shadow-xl transform transition hover:scale-110 active:scale-95 hover:bg-green-600 z-10">
+                    YES! ❤️
+                </button>
+                
+                <button id="noBtn" class="no-btn-transition px-12 py-5 bg-red-500 text-white font-bold rounded-full text-2xl shadow-xl z-10 cursor-pointer">
+                    NO 💔
+                </button>
+            </div>
 
-        <div id="successMessage" class="hidden text-center fade-in">
-            <h3 class="text-4xl font-bold text-pink-600 mb-4">I love youuuuhhh 💖</h3>
-            <p class="text-xl text-gray-600">You've made me the happiest person alive!</p>
+            <div id="successMessage" class="hidden text-center fade-in">
+                <h3 class="text-4xl font-bold text-pink-600 mb-4">I love youuuuhhh 💖</h3>
+                <p class="text-xl text-gray-600">You've made me the happiest person alive!</p>
+            </div>
         </div>
     </div>
 
     <!-- NEW: Footer -->
-    <footer class="bg-pink-100 py-8 text-center text-pink-400 text-sm">
+    <footer class="bg-pink-100/80 backdrop-blur-md py-8 text-center text-pink-500 text-sm font-semibold">
         <p>Made with ❤️ by Kashi</p>
         <p class="mt-2 text-xs">Forever & Always</p>
     </footer>
