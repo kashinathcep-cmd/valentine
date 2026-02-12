@@ -168,30 +168,6 @@
                 </div>
             </div>
         </div>
-        <section class="max-w-3xl mx-auto px-6 py-20 text-center relative z-10 flex flex-col items-center">
-        <h2 class="text-4xl handwriting text-pink-600 mb-8">You have a Surprise... 🎁</h2>
-        
-        <!-- Surprise Button -->
-        <button id="surpriseBtn" onclick="revealVideo()" class="group relative inline-flex items-center justify-center px-10 py-4 font-bold text-white transition-all duration-300 bg-gradient-to-r from-pink-400 to-pink-600 rounded-full shadow-xl hover:scale-105 hover:shadow-pink-300/50 animate-bounce">
-            <span class="text-xl tracking-wide">Click for your Surprise</span>
-        </button>
-
-        <!-- Video Container (Hidden initially) -->
-        <div id="videoContainer" class="hidden w-full mt-4 transition-all duration-700 opacity-0 transform scale-95">
-            <div class="p-2 bg-white/60 backdrop-blur-md rounded-3xl shadow-2xl border-2 border-pink-200">
-                <div class="relative rounded-2xl overflow-hidden bg-black aspect-video flex items-center justify-center">
-                    <video id="surpriseVideo" class="w-full h-full object-cover" controls playsInline>
-                        <!-- Replace src with your actual video link here! -->
-                        <source src="images/valentine.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
-            </div>
-            <button onclick="closeVideo()" class="mt-8 px-8 py-3 bg-white/80 hover:bg-white text-pink-600 font-bold rounded-full shadow-md transition-colors border border-pink-200">
-                Close Video
-            </button>
-        </div>
-    </section>
         
         <div class="absolute bottom-10 animate-bounce text-pink-400">
             <p class="text-sm font-semibold">Scroll for our story</p>
@@ -356,7 +332,31 @@
     </section>
 
     <!-- SURPRISE VIDEO SECTION -->
-    
+    <section class="max-w-3xl mx-auto px-6 py-20 text-center relative z-10 flex flex-col items-center">
+        <h2 class="text-4xl handwriting text-pink-600 mb-8">One Last Surprise... 🎁</h2>
+        
+        <!-- Surprise Button -->
+        <button id="surpriseBtn" onclick="revealVideo()" class="group relative inline-flex items-center justify-center px-10 py-4 font-bold text-white transition-all duration-300 bg-gradient-to-r from-pink-400 to-pink-600 rounded-full shadow-xl hover:scale-105 hover:shadow-pink-300/50 animate-bounce">
+            <span class="text-xl tracking-wide">Click for your Surprise</span>
+        </button>
+
+        <!-- Video Container (Hidden initially) -->
+        <div id="videoContainer" class="hidden w-full mt-4 transition-all duration-700 opacity-0 transform scale-95">
+            <!-- Removed the backdrop blur here and added transform-gpu to force hardware acceleration -->
+            <div class="p-2 bg-white/80 rounded-3xl shadow-2xl border-2 border-pink-200 transform-gpu">
+                <div class="relative rounded-2xl overflow-hidden bg-black aspect-video flex items-center justify-center">
+                    <video id="surpriseVideo" class="w-full h-full object-cover" controls playsInline preload="auto">
+                        <!-- Replace src with your actual video link here! -->
+                        <source src="images/valentine.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+            <button onclick="closeVideo()" class="mt-8 px-8 py-3 bg-white/80 hover:bg-white text-pink-600 font-bold rounded-full shadow-md transition-colors border border-pink-200">
+                Close Video
+            </button>
+        </div>
+    </section>
 
     <!-- Proposal -->
     <div class="min-h-screen flex flex-col justify-center items-center p-6 text-center">
